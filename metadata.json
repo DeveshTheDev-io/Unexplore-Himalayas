@@ -1,0 +1,7 @@
+{
+  "name": "Unexplore Himalayas",
+  "description": "Best Himalayas Tour Packages and Travel Experience",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}
