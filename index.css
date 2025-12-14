@@ -13,7 +13,7 @@ html {
 
 body {
   font-family: 'Space Grotesk', sans-serif;
-  background-color: #000000; /* Pure Black */
+  /* Background handled by FluidBackground component */
   color: #fff;
   overflow-x: hidden;
 }

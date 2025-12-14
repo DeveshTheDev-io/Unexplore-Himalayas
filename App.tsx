@@ -330,10 +330,11 @@ const App: React.FC = () => {
       </AnimatePresence>
 
       {/* HERO SECTION */}
-      <header className="relative h-[100svh] min-h-[600px] flex flex-col items-center justify-center overflow-hidden px-4">
+      {/* Changed justify-center to justify-end to position text closer to bottom marquee */}
+      <header className="relative h-[100svh] min-h-[600px] flex flex-col items-center justify-end overflow-hidden px-4 pb-32 md:pb-48">
         <motion.div 
           style={{ y, opacity }}
-          className="z-10 text-center flex flex-col items-center w-full max-w-6xl pb-24 md:pb-20"
+          className="z-10 text-center flex flex-col items-center w-full max-w-6xl mb-4 md:mb-8"
         >
            {/* Date / Location - With enhanced contrast for bright background */}
           <motion.div
@@ -378,8 +379,8 @@ const App: React.FC = () => {
           </motion.p>
         </motion.div>
 
-        {/* MARQUEE - With dark background for contrast at bottom */}
-        <div className="absolute bottom-12 md:bottom-16 left-0 w-full py-4 md:py-6 bg-black text-white z-20 overflow-hidden border-y-4 border-white/20 shadow-2xl">
+        {/* MARQUEE - Positioned at absolute bottom, now visually close to text due to justify-end */}
+        <div className="absolute bottom-10 left-0 w-full py-4 md:py-6 bg-black text-white z-20 overflow-hidden border-y-4 border-white/20 shadow-2xl">
           <motion.div 
             className="flex w-fit will-change-transform"
             animate={{ x: "-50%" }}
