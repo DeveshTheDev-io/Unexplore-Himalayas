@@ -7,6 +7,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { X, User, Lock, ArrowRight, Loader2, MapPin, Phone, FileText } from 'lucide-react';
 import { signUpUser, signInUser } from '../services/authService';
+import { checkAuth, login as adminLogin } from '../services/adminService';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -36,8 +37,13 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess }) => 
 
     try {
       if (isLogin) {
-        const { error } = await signInUser(username, password);
-        if (error) throw error;
+        // Check for admin login first
+        if (checkAuth(username, password)) {
+          adminLogin();
+        } else {
+          const { error } = await signInUser(username, password);
+          if (error) throw error;
+        }
       } else {
         const { error } = await signUpUser({
           username,

@@ -18,8 +18,9 @@ import UserDashboard from './components/UserDashboard';
 import { Destination, Package, User } from './types';
 import { getDestinations } from './services/destinationService';
 import { getPackages } from './services/packageService';
-import { onAuthStateChange } from './services/authService';
+import { onAuthStateChange, signOutUser } from './services/authService';
 import { toggleWishlist, getWishlist } from './services/customerService';
+import { isAuthenticated as isInternalAdminAuthenticated, logout as adminLogout } from './services/adminService';
 
 const App: React.FC = () => {
   const { scrollYProgress, scrollY } = useScroll();
@@ -45,6 +46,7 @@ const App: React.FC = () => {
   const [isAdminPanelOpen, setIsAdminPanelOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isUserDashboardOpen, setIsUserDashboardOpen] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const [showScrollTop, setShowScrollTop] = useState(false);
 
@@ -74,8 +76,25 @@ const App: React.FC = () => {
       }
     });
 
+    // Initial Admin Check
+    setIsAdmin(isInternalAdminAuthenticated());
+
     return () => subscription.unsubscribe();
   }, []);
+
+  const checkAdminStatus = () => {
+    setIsAdmin(isInternalAdminAuthenticated());
+  };
+
+  const handleLogout = async () => {
+    if (isAdmin) {
+      adminLogout();
+      setIsAdmin(false);
+    }
+    await signOutUser();
+    setUser(null);
+    setIsUserDashboardOpen(false);
+  };
 
   // Handle scroll to top visibility
   useEffect(() => {
@@ -181,7 +200,7 @@ const App: React.FC = () => {
           <AuthModal 
             isOpen={isAuthModalOpen} 
             onClose={() => setIsAuthModalOpen(false)}
-            onSuccess={() => setIsAuthModalOpen(false)}
+            onSuccess={() => { setIsAuthModalOpen(false); checkAdminStatus(); }}
           />
         )}
       </AnimatePresence>
@@ -193,7 +212,7 @@ const App: React.FC = () => {
              isOpen={isUserDashboardOpen}
              onClose={() => setIsUserDashboardOpen(false)}
              user={user}
-             onLogout={() => { setUser(null); setIsUserDashboardOpen(false); }}
+             onLogout={handleLogout}
              onBook={handleBookNow}
           />
         )}
@@ -259,15 +278,24 @@ const App: React.FC = () => {
                <UserIcon className="w-4 h-4" /> My Profile
              </button>
           ) : (
-             <button 
-               onClick={() => setIsAuthModalOpen(true)}
-               className="hover:text-[#a8fbd3] transition-colors"
-               data-hover="true"
-             >
-               Log In
-             </button>
-          )}
+               <button 
+                onClick={() => setIsAuthModalOpen(true)}
+                className="hover:text-[#a8fbd3] transition-colors"
+                data-hover="true"
+              >
+                Log In
+              </button>
+           )}
 
+          {isAdmin && (
+            <button 
+              onClick={() => setIsAdminPanelOpen(true)}
+              className="flex items-center gap-2 hover:text-[#a8fbd3] transition-colors ml-4 border border-[#4fb7b3] bg-[#4fb7b3]/10 px-4 py-2 rounded-full text-xs font-bold text-[#4fb7b3]"
+              data-hover="true"
+            >
+              <Lock className="w-3 h-3" /> Admin Dashboard
+            </button>
+          )}
         </div>
         <button 
           onClick={() => handleBookNow()}
@@ -309,6 +337,15 @@ const App: React.FC = () => {
               <button onClick={() => { setIsUserDashboardOpen(true); setMobileMenuOpen(false); }} className="text-2xl font-bold">My Profile</button>
             ) : (
               <button onClick={() => { setIsAuthModalOpen(true); setMobileMenuOpen(false); }} className="text-2xl font-bold">Log In</button>
+            )}
+
+            {isAdmin && (
+              <button 
+                onClick={() => { setIsAdminPanelOpen(true); setMobileMenuOpen(false); }} 
+                className="text-2xl font-bold text-[#4fb7b3] flex items-center gap-3"
+              >
+                <Lock /> Admin Dashboard
+              </button>
             )}
 
             <button 
@@ -598,13 +635,6 @@ const App: React.FC = () => {
              <div className="font-heading text-3xl md:text-4xl font-bold tracking-tighter mb-4 text-white">UNEXPLORE HIMALAYAS</div>
              <div className="flex gap-2 text-xs font-mono text-gray-400 items-center">
                <span>Made for adventurers</span>
-               {/* ADMIN TRIGGER */}
-               <button 
-                onClick={() => setIsAdminPanelOpen(true)}
-                className="ml-2 opacity-10 hover:opacity-50 transition-opacity"
-               >
-                 <Lock className="w-3 h-3" />
-               </button>
              </div>
           </div>
           
