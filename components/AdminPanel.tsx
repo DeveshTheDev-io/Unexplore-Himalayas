@@ -14,9 +14,10 @@ import { Destination, Package, User as AppUser } from '../types';
 interface AdminPanelProps {
   isOpen: boolean;
   onClose: () => void;
+  onLogout?: () => void;
 }
 
-const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
+const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose, onLogout }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -124,6 +125,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
     setUsername('');
     setPassword('');
     setBookings([]);
+    if (onLogout) onLogout();
   };
 
   // --- Booking Handlers ---

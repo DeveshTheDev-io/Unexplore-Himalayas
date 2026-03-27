@@ -224,6 +224,7 @@ const App: React.FC = () => {
           <AdminPanel 
             isOpen={isAdminPanelOpen}
             onClose={() => setIsAdminPanelOpen(false)}
+            onLogout={() => setIsAdmin(false)}
           />
         )}
       </AnimatePresence>
